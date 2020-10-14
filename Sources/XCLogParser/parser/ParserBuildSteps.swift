@@ -84,7 +84,9 @@ public final class ParserBuildSteps {
         self.buildIdentifier = "\(machineName)_\(activityLog.mainSection.uniqueIdentifier)"
         buildStatus = activityLog.mainSection.localizedResultString.replacingOccurrences(of: "Build ", with: "")
         let mainSectionWithTargets = activityLog.mainSection.groupedByTarget()
+        Log.start("Parse IDEActivityLog")
         var mainBuildStep = try parseLogSection(logSection: mainSectionWithTargets, type: .main, parentSection: nil)
+        Log.end("Parse IDEActivityLog")
         mainBuildStep.errorCount = totalErrors
         mainBuildStep.warningCount = totalWarnings
         mainBuildStep = decorateWithSwiftcTimes(mainBuildStep)
@@ -158,7 +160,14 @@ public final class ParserBuildSteps {
                                  clangTimeTraceFile: nil,
                                  linkerStatistics: nil
                                  )
+        func if_qb(_ code: @autoclosure () -> Void) {
+            if step.title == "Build target QuickBooks" {
+                code()
+            }
+        }
+        
         if type == .main {
+        if_qb(Log.start("Substeps QB"))
 
             step.subSteps = try logSection.subSections.map { subSection -> BuildStep in
                 let subType: BuildStepType = type == .main ? .target : .detail
@@ -167,12 +176,15 @@ public final class ParserBuildSteps {
                                            parentSection: step,
                                            parentLogSection: logSection)
             }
+        if_qb(Log.end("Substeps QB"))
         }
             if type == .target {
                 step.warningCount = targetWarnings
                 step.errorCount = targetErrors
             } else if type == .detail {
+                if_qb(Log.start("Move swift steps to root"))
                 step = step.moveSwiftStepsToRoot()
+                if_qb(Log.end("Move swift steps to root"))
             }
             if step.detailStepType == .swiftCompilation {
                 if step.fetchedFromCache == false {

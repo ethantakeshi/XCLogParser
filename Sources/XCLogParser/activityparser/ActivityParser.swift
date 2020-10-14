@@ -47,11 +47,17 @@ public class ActivityParser {
                                       redacted: Bool,
                                       withoutBuildSpecificInformation: Bool) throws -> IDEActivityLog {
         let logLoader = LogLoader()
+        Log.start("ActivityLog.load")
         let content = try logLoader.loadFromURL(logURL)
+        Log.end("ActivityLog.load")
+        Log.start("ActivityLog.lex")
         let lexer = Lexer(filePath: logURL.path)
+        Log.end("ActivityLog.lex")
+        Log.start("ActivityLog.tokenize")
         let tokens = try lexer.tokenize(contents: content,
                                         redacted: redacted,
                                         withoutBuildSpecificInformation: withoutBuildSpecificInformation)
+        Log.end("ActivityLog.tokenize")
         return try parseIDEActiviyLogFromTokens(tokens)
     }
 

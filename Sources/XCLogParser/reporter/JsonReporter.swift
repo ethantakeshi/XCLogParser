@@ -35,10 +35,12 @@ public struct JsonReporter: LogReporter {
     }
 
     private func report<T: Encodable>(encodable: T, output: ReporterOutput) throws {
+        Log.start("Report")
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
         let json = try encoder.encode(encodable)
         try output.write(report: json)
+        Log.end("Report")
     }
 
 }

@@ -30,6 +30,7 @@ struct ParseCommand: CommandProtocol {
     let function = "Parses the content of an xcactivitylog file"
 
     func run(_ options: ParseOptions) -> Result<(), CommandantError<Swift.Error>> {
+        Log.start("Full Command")
         if !options.hasValidLogOptions() {
             return .failure(.usageError(description:
                 """
@@ -71,6 +72,7 @@ struct ParseCommand: CommandProtocol {
         } catch {
             return.failure(.commandError(error))
         }
+        Log.end("Full Command")
         return .success(())
     }
 
