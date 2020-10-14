@@ -313,7 +313,25 @@ public struct BuildStep: Encodable {
         self.clangTimeTraceFile = clangTimeTraceFile
         self.linkerStatistics = linkerStatistics
     }
-}
+    
+    enum CodingKeys: String, CodingKey {
+        case duration
+        case endTimestamp
+        case fetchedFromCache
+        case startTimestamp
+        case substeps
+        case title
+    }
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(title, forKey: .title)
+        try container.encode(duration, forKey: .duration)
+        try container.encode(startTimestamp, forKey: .startTimestamp)
+        try container.encode(endTimestamp, forKey: .endTimestamp)
+        if subSteps.count > 0 {
+            try container.encode(subSteps, forKey: .substeps)
+        }
+    }}
 
 /// Extension used to flatten the three of a `BuildStep`
 public extension BuildStep {

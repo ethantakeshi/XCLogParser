@@ -158,6 +158,7 @@ public final class ParserBuildSteps {
                                  clangTimeTraceFile: nil,
                                  linkerStatistics: nil
                                  )
+        if type == .main {
 
             step.subSteps = try logSection.subSections.map { subSection -> BuildStep in
                 let subType: BuildStepType = type == .main ? .target : .detail
@@ -166,6 +167,7 @@ public final class ParserBuildSteps {
                                            parentSection: step,
                                            parentLogSection: logSection)
             }
+        }
             if type == .target {
                 step.warningCount = targetWarnings
                 step.errorCount = targetErrors
